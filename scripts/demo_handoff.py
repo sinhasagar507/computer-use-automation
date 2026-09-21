@@ -14,6 +14,7 @@ of what the human did, and the resume are the real code paths used by the CLI.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -30,7 +31,9 @@ from cua.surface.base import Action  # noqa: E402
 from cua.surface.playwright_surface import PlaywrightSurface  # noqa: E402
 
 ARTIFACT = ROOT / "artifacts" / "lookup_member_balance.json"
-PARAMS = {"username": "teller1", "password": "demo-pass", "member_id": "12345"}
+PARAMS = {"username": os.environ.get("MOCKBANK_USER", "teller1"),
+          "password": os.environ.get("MOCKBANK_PASSWORD", "demo-pass"),
+          "member_id": "12345"}
 UNDECLARED = "UNEXPECTED_DIALOG"
 
 
