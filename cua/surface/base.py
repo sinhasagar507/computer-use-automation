@@ -12,7 +12,7 @@ from typing import Literal, Protocol
 
 from pydantic import BaseModel, Field
 
-ActionType = Literal["navigate", "click", "type", "select", "press", "extract", "dismiss_dialog", "done"]
+ActionType = Literal["navigate", "click", "type", "select", "press", "extract", "dismiss_dialog", "done", "escalate"]
 
 
 class Node(BaseModel):
@@ -41,6 +41,8 @@ class Observation(BaseModel):
     frames: list[str]
     nodes: list[Node]
     text: str                                   # visible text digest, per frame
+    frame_urls: dict[str, str] = Field(default_factory=dict)   # frame name -> its document URL
+    frame_texts: dict[str, str] = Field(default_factory=dict)
     dialog: DialogInfo | None = None            # a blocking dialog is open
     http_status: int | None = None              # last main-resource status if known
     viewport: tuple[int, int] = (1280, 900)
@@ -48,6 +50,15 @@ class Observation(BaseModel):
 
     def find(self, ref: str) -> Node | None:
         return next((n for n in self.nodes if n.ref == ref), None)
+
+    def url_of(self, frame: str | None) -> str:
+        """URL of the document that holds the given frame (page URL when unknown)."""
+        if frame is None:
+            return self.url
+        return self.frame_urls.get(frame, self.url)
+
+    def all_urls(self) -> list[str]:
+        return [self.url, *self.frame_urls.values()]
 
 
 class Action(BaseModel):
@@ -60,6 +71,7 @@ class Action(BaseModel):
     key: str | None = None          # for press
     accept: bool = True             # for dismiss_dialog
     name: str | None = None         # for extract: output name
+    evidence: str | None = None     # for done: exact on-screen text that proves success
     reason: str = ""
 
 

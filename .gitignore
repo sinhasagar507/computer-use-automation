@@ -6,3 +6,5 @@ __pycache__/
 runs/
 *.egg-info/
 .DS_Store
+tests/fixtures/
+artifacts/*.json

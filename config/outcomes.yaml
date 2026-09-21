@@ -1,0 +1,34 @@
+# Known runtime conditions for the vendor product "MockCore Teller Workstation".
+# Seeded by a human reviewer, extended by discovery runs. Tenant overlays rename labels.
+# kind: business  -> a legitimate result the caller must branch on (not a failure)
+#       recoverable -> replay applies `recovery` and continues
+#       failure   -> hard stop with a debuggable error
+MockCore:
+  - code: MEMBER_NOT_FOUND
+    kind: business
+    description: The searched member does not exist.
+    detect: {kind: text_visible, value: "No member found for"}
+  - code: VALIDATION_ERROR
+    kind: business
+    description: The app rejected the submitted form; the message names the field.
+    detect: {kind: text_visible, value: "is required."}
+  - code: PERMISSION_DENIED
+    kind: business
+    description: The operator lacks permission for this record.
+    detect: {kind: text_visible, value: "You do not have permission"}
+  - code: UNEXPECTED_DIALOG
+    kind: recoverable
+    description: A blocking browser dialog (compliance notice, etc.) interrupted the flow.
+    detect: {kind: dialog_open}
+    recovery: dismiss_dialog
+    max_attempts: 2
+  - code: SESSION_EXPIRED
+    kind: recoverable
+    description: The session timed out; sign in again and resume.
+    detect: {kind: text_visible, value: "Your session has expired"}
+    recovery: relogin
+    max_attempts: 1
+  - code: APP_ERROR
+    kind: failure
+    description: The host system returned an internal error.
+    detect: {kind: text_visible, value: "System Error"}

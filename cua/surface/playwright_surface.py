@@ -9,6 +9,8 @@ legacy web apps and (via a different Surface) to desktop accessibility trees.
 
 from __future__ import annotations
 
+import json
+
 from playwright.sync_api import Dialog, Frame, Page, TimeoutError as PWTimeout, sync_playwright
 
 from cua.surface.base import Action, ActionResult, DialogInfo, Node, Observation
@@ -51,7 +53,7 @@ _COLLECT_JS = r"""
   const hintOf = (el) => {
     // legacy table layout: the label is usually the previous cell in the same row
     const cell = el.closest('td,th');
-    if (cell && cell.previousElementSibling) return txt(cell.previousElementSibling).slice(0, 80);
+    if (cell && cell.previousElementSibling && !cell.previousElementSibling.querySelector('table')) return txt(cell.previousElementSibling).slice(0, 80);
     const row = el.closest('tr');
     if (row && row.previousElementSibling) return txt(row.previousElementSibling).slice(0, 80);
     return '';
@@ -93,7 +95,8 @@ _COLLECT_JS = r"""
     if (t === 'input' && !['submit','button','reset','password'].includes((el.type||'').toLowerCase())) value = el.value;
     if (t === 'select') value = el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : '';
     if (t === 'input' && (el.type||'').toLowerCase() === 'password') value = el.value ? '••••' : '';
-    out.push({ref, role, name: nameOf(el, role), label_hint: (t==='input'||t==='select'||t==='textarea') ? hintOf(el) : '',
+    const wantHint = (t==='input'||t==='select'||t==='textarea'||role==='cell');
+    out.push({ref, role, name: nameOf(el, role), label_hint: wantHint ? hintOf(el) : '',
               value, tag: t, path: pathOf(el), bbox: [r.x, r.y, r.width, r.height],
               enabled: !el.disabled,
               options: t === 'select' ? Array.from(el.options).map(o => o.text) : undefined});
@@ -101,6 +104,24 @@ _COLLECT_JS = r"""
   const text = (document.body ? (document.body.innerText || '') : '').replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim();
   return {nodes: out, text: text.slice(0, 6000), title: document.title};
 }
+"""
+
+# Installed as a context init script so every document the human touches reports back.
+# Password values are masked here, in the page, so a raw credential never crosses the boundary.
+_HUMAN_LISTENER_JS = r"""
+(() => {
+  if (window.__cuaHumanInstalled || !window.__cuaHuman) return; window.__cuaHumanInstalled = true;
+  const path = (el) => { const p=[]; let n=el; while (n && n.nodeType===1 && n.tagName!=='HTML'){ let k=1,s=n.previousElementSibling; while(s){ if(s.tagName===n.tagName)k++; s=s.previousElementSibling;} p.unshift(n.tagName.toLowerCase()+'['+k+']'); n=n.parentElement;} return p.join('>'); };
+  const desc = (el) => { const t=el.tagName.toLowerCase(); const ty=(el.type||'').toLowerCase();
+    let label = el.getAttribute('aria-label') || (t==='input' && ['submit','button'].includes(ty) ? el.value : '') || (el.innerText||'').trim().slice(0,60);
+    if (!label && el.closest('td') && el.closest('td').previousElementSibling) label = el.closest('td').previousElementSibling.innerText.trim().slice(0,60);
+    return {tag:t, type:ty, name: el.getAttribute('name')||'', label, path: path(el)}; };
+  const send = (o) => { try { window.__cuaHuman(JSON.stringify(o)); } catch (e) {} };
+  document.addEventListener('click', (e) => { const el = (e.target.closest && e.target.closest('a,button,input,select,label,td')) || e.target; send({event:'click', frame: window.name, ...desc(el)}); }, true);
+  document.addEventListener('change', (e) => { const el = e.target; const d = desc(el); const ty=(el.type||'').toLowerCase();
+    d.value = ty==='password' ? '<masked>' : (el.value||'').slice(0,80); send({event:'change', frame: window.name, ...d}); }, true);
+  document.addEventListener('submit', (e) => { send({event:'submit', frame: window.name, action: (e.target && e.target.action) || ''}); }, true);
+})();
 """
 
 
@@ -117,11 +138,45 @@ class PlaywrightSurface:
         self._ref_frames: dict[str, Frame] = {}
         self.page.on("dialog", self._on_dialog)
         self.page.on("response", self._on_response)
+        # Human-action recording is armed here, while the context still holds a blank page.
+        # Both calls evaluate script in every open frame, so doing this later (for example at
+        # escalation time, when a modal dialog has frozen page scripts) would block forever.
+        self._human_events: list[dict] = []
+        self._recording_human = False
+        self._ctx.expose_binding("__cuaHuman", self._on_human_event)
+        self._ctx.add_init_script(_HUMAN_LISTENER_JS)
+        self.page.on("framenavigated", self._on_frame_navigated)
 
     # --- events ---------------------------------------------------------------
     def _on_dialog(self, dialog: Dialog) -> None:
         # Do not auto-dismiss: a blocking dialog is a runtime condition the caller must decide on.
         self._pending_dialog = dialog
+
+    def _on_human_event(self, source, payload: str) -> None:
+        if not self._recording_human:
+            return
+        try:
+            rec = json.loads(payload)
+        except Exception:
+            rec = {"event": "raw", "payload": str(payload)[:200]}
+        self._human_events.append(rec)
+
+    def _on_frame_navigated(self, frame: Frame) -> None:
+        if self._recording_human:
+            self._human_events.append({"event": "navigate", "frame": frame.name, "url": frame.url})
+
+    # --- human control (used by the handoff controller) -----------------------
+    def start_human_recording(self) -> None:
+        self._human_events = []
+        self._recording_human = True
+
+    def stop_human_recording(self) -> list[dict]:
+        self._recording_human = False
+        return list(self._human_events)
+
+    def drain_human_events(self) -> list[dict]:
+        """Events recorded so far, without stopping the recording (for the live operator page)."""
+        return list(self._human_events)
 
     def _on_response(self, resp) -> None:
         try:
@@ -167,15 +222,28 @@ class PlaywrightSurface:
         if self._pending_dialog is not None:
             d = self._pending_dialog
             base = self._last_obs
+            # Page scripts are frozen, so nodes and text stay as last seen. Frame URLs come from
+            # the driver, not from page JS, so those we can still refresh -- which keeps
+            # URL-based checks honest even while a dialog blocks the page.
+            fresh_urls = {}
+            for idx, fr in enumerate(self.page.frames):
+                try:
+                    fresh_urls[fr.name or ("" if fr == self.page.main_frame else f"frame{idx}")] = fr.url
+                except Exception:
+                    pass
             return Observation(
                 url=self.page.url, title=base.title if base else "", frames=base.frames if base else [],
                 nodes=base.nodes if base else [], text=base.text if base else "",
+                frame_urls={**(base.frame_urls if base else {}), **fresh_urls},
+                frame_texts=base.frame_texts if base else {},
                 dialog=DialogInfo(type=d.type, message=d.message), http_status=self._last_status,
                 viewport=self.viewport, screenshot_png=base.screenshot_png if base else None,
             )
         nodes: list[Node] = []
         frames: list[str] = []
         texts: list[str] = []
+        frame_urls: dict[str, str] = {}
+        frame_texts: dict[str, str] = {}
         title = self.page.title()
         self._ref_frames = {}
         for idx, frame in enumerate(self.page.frames):
@@ -188,6 +256,8 @@ class PlaywrightSurface:
                 continue
             ox, oy = self._frame_offset(frame)
             frames.append(fname)
+            frame_urls[fname] = frame.url
+            frame_texts[fname] = data["text"]
             for n in data["nodes"]:
                 bx, by, bw, bh = n["bbox"]
                 name = n["name"]
@@ -203,7 +273,7 @@ class PlaywrightSurface:
             if frame == self.page.main_frame and data["title"]:
                 title = data["title"]
         obs = Observation(url=self.page.url, title=title, frames=frames, nodes=nodes, text="\n".join(texts),
-                          http_status=self._last_status, viewport=self.viewport, screenshot_png=self.screenshot())
+                          frame_urls=frame_urls, frame_texts=frame_texts, http_status=self._last_status, viewport=self.viewport, screenshot_png=self.screenshot())
         self._last_obs = obs
         return obs
 

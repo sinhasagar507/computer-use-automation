@@ -23,6 +23,7 @@ allowlist:
     - extract
     - dismiss_dialog
     - done
+    - escalate
 
 # Risk classes. `irreversible` actions are blocked unless the run passes --confirm-risky,
 # in which case they escalate to a human for confirmation instead of executing.
