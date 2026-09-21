@@ -1,0 +1,14 @@
+{
+  "tenant": "beta",
+  "app_version": "1.0",
+  "entry_url": "http://127.0.0.1:5051/",
+  "route_map": {
+    "/members/search": "/member/lookup"
+  },
+  "name_map": {
+    "Member ID": "Member Number",
+    "Search": "Find member",
+    "Open sub-account": "Add share account",
+    "Open account": "Create account"
+  }
+}

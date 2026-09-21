@@ -157,11 +157,15 @@ def run_discovery(
 
         # --- terminal actions ---------------------------------------------------
         if action.type == "done":
+            # The run is only successful if the model can point at text that is really on the
+            # screen. This is what turns "the model says it worked" into a replayable checkpoint.
             ev = (action.evidence or "").strip()
-            if ev and ev not in obs.text:
+            if ev and " ".join(ev.split()).lower() not in " ".join(obs.text.split()).lower():
                 log.event("done.evidence_missing", step=i, evidence=ev)
                 history.append(f"{i}: done rejected: evidence text {ev!r} is not on screen")
-                extra = f"Your evidence text {ev!r} is not visible on the current screen. Extract/verify first."
+                extra = (f"Your evidence {ev!r} does not appear on the screen as one contiguous phrase, so the goal "
+                         f"is not verified. Copy ONE short phrase exactly as it appears (a heading or a status line), "
+                         f"or take another action first. Do not join several values together.")
                 consecutive_failures += 1
                 if consecutive_failures >= 3:
                     return finish("dead_end", "could not verify success evidence")

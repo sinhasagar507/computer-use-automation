@@ -32,13 +32,16 @@ Action types and fields:
 - press:    {"ref": "<ref>", "key": "Enter"}
 - extract:  {"ref": "<ref>", "name": "<output_name>"}   (read the text of an element as a named output)
 - dismiss_dialog: {"accept": true|false}          (when a blocking dialog is open)
-- done:     {"evidence": "<exact short text visible on screen that proves the goal is met>"}
+- done:     {"evidence": "<one short phrase copied verbatim from the current screen>"}
 - escalate: {"reason": "..."}                    (you are stuck, blocked, or the next step is risky/irreversible)
 
 Rules:
 - Use the ref of an element from the CURRENT element list. Prefer refs over coordinates.
 - For parameters, type the literal placeholder {{params.<name>}} (e.g. {{params.member_id}}) instead of the value. The system substitutes it. Never invent parameter values.
 - Extract every output the goal asks for with an `extract` action BEFORE `done`.
+- `evidence` must be ONE contiguous phrase that appears on the screen exactly as you write it, such as a
+  page heading ("Member Detail") or a confirmation line ("The new sub-account was opened successfully").
+  Never join two values together, and never summarise. This phrase becomes the replay checkpoint.
 - Do not perform irreversible actions (posting transactions, closing accounts, wires). Escalate instead.
 - If the same action fails twice, try a different element or escalate.
 - Legacy layouts: field labels are usually in the cell to the left (shown as hint=...).

@@ -93,7 +93,7 @@ def record(result: DiscoveryResult, *, goal: str, cap_id: str, cap_name: str, en
         expect: list[Expect] = []
         moved = t.url_after and _url_path(t.url_after) != _url_path(t.url)
         if moved and a.type in ("click", "navigate", "press"):
-            expect.append(Expect(kind="url_contains", value=_url_path(t.url_after)))
+            expect.append(Expect(kind="url_contains", value=_parameterize(_url_path(t.url_after), params)))
         wait = Wait(kind="load" if a.type in ("click", "navigate", "press") else "none")
         risk = t.risk if a.type == "click" else "read"
         risk_max = max_risk(risk_max, risk)

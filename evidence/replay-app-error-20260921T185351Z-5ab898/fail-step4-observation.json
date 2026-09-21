@@ -1,0 +1,144 @@
+{
+  "url": "http://127.0.0.1:5050/",
+  "title": "Summit Federal Credit Union - Teller Workstation",
+  "frames": [
+    "nav",
+    "main"
+  ],
+  "nodes": [
+    {
+      "ref": "nav_1",
+      "frame": "nav",
+      "role": "cell",
+      "name": "Summit Federal Credit Union \u2014 Teller Workstation",
+      "label_hint": "",
+      "value": null,
+      "tag": "td",
+      "path": "body[1]>table[1]>tbody[1]>tr[1]>td[1]",
+      "bbox": [
+        0.0,
+        0.0,
+        160.0,
+        88.0
+      ],
+      "enabled": true
+    },
+    {
+      "ref": "nav_2",
+      "frame": "nav",
+      "role": "columnheader",
+      "name": "Menu",
+      "label_hint": "",
+      "value": null,
+      "tag": "th",
+      "path": "body[1]>table[2]>tbody[1]>tr[1]>th[1]",
+      "bbox": [
+        12.5,
+        100.5,
+        159.0,
+        28.0
+      ],
+      "enabled": true
+    },
+    {
+      "ref": "nav_3",
+      "frame": "nav",
+      "role": "link",
+      "name": "Sign In",
+      "label_hint": "",
+      "value": null,
+      "tag": "a",
+      "path": "body[1]>table[2]>tbody[1]>tr[2]>td[1]>a[1]",
+      "bbox": [
+        21.0,
+        133.0,
+        57.90625,
+        19.0
+      ],
+      "enabled": true
+    },
+    {
+      "ref": "main_1",
+      "frame": "main",
+      "role": "cell",
+      "name": "Summit Federal Credit Union \u2014 Teller Workstation",
+      "label_hint": "",
+      "value": null,
+      "tag": "td",
+      "path": "body[1]>table[1]>tbody[1]>tr[1]>td[1]",
+      "bbox": [
+        181.0,
+        0.0,
+        803.03125,
+        31.0
+      ],
+      "enabled": true
+    },
+    {
+      "ref": "main_2",
+      "frame": "main",
+      "role": "cell",
+      "name": "Signed in: <username>",
+      "label_hint": "Summit Federal Credit Union \u2014 Teller Workstation",
+      "value": null,
+      "tag": "td",
+      "path": "body[1]>table[1]>tbody[1]>tr[1]>td[2]",
+      "bbox": [
+        984.03125,
+        0.0,
+        295.96875,
+        31.0
+      ],
+      "enabled": true
+    },
+    {
+      "ref": "main_3",
+      "frame": "main",
+      "role": "columnheader",
+      "name": "System Error",
+      "label_hint": "",
+      "value": null,
+      "tag": "th",
+      "path": "body[1]>table[2]>tbody[1]>tr[1]>th[1]",
+      "bbox": [
+        193.5,
+        43.5,
+        843.890625,
+        28.0
+      ],
+      "enabled": true
+    },
+    {
+      "ref": "main_4",
+      "frame": "main",
+      "role": "cell",
+      "name": "HTTP 500 - An internal error occurred in the host system (CORE-ERR-0x2F). Try again later.",
+      "label_hint": "System Error",
+      "value": null,
+      "tag": "td",
+      "path": "body[1]>table[2]>tbody[1]>tr[2]>td[1]",
+      "bbox": [
+        193.5,
+        71.5,
+        843.890625,
+        28.0
+      ],
+      "enabled": true
+    }
+  ],
+  "text": "[frame:nav]\nSummit Federal Credit Union \u2014 Teller Workstation \nMenu\nSign In\ntenant=alpha fault=error500\n[frame:main]\nSummit Federal Credit Union \u2014 Teller Workstation Signed in: <username>\nSystem Error\nHTTP 500 - An internal error occurred in the host system (CORE-ERR-0x2F). Try again later.\ntenant=alpha fault=error500",
+  "frame_urls": {
+    "nav": "http://127.0.0.1:5050/nav",
+    "main": "http://127.0.0.1:5050/members/search"
+  },
+  "frame_texts": {
+    "nav": "Summit Federal Credit Union \u2014 Teller Workstation \nMenu\nSign In\ntenant=alpha fault=error500",
+    "main": "Summit Federal Credit Union \u2014 Teller Workstation Signed in: <username>\nSystem Error\nHTTP 500 - An internal error occurred in the host system (CORE-ERR-0x2F). Try again later.\ntenant=alpha fault=error500"
+  },
+  "dialog": null,
+  "http_status": 500,
+  "viewport": [
+    1280,
+    900
+  ]
+}

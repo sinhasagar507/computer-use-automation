@@ -1,0 +1,717 @@
+{
+  "schema_version": "1.0",
+  "id": "lookup_member_balance",
+  "name": "Look up member savings balance",
+  "version": "1.0.0",
+  "status": "draft",
+  "description": "Sign in to the teller workstation, look up the member whose Member ID is the member_id parameter, and read that member's details. Extract the member's name as output member_name and the Regular Share (Savings) current balance as output savings_balance.",
+  "goal": "Sign in to the teller workstation, look up the member whose Member ID is the member_id parameter, and read that member's details. Extract the member's name as output member_name and the Regular Share (Savings) current balance as output savings_balance.",
+  "app": {
+    "vendor": "MockCore",
+    "product": "Teller Workstation",
+    "version": "1.0",
+    "tenant": "alpha",
+    "entry_url": "http://127.0.0.1:5050/"
+  },
+  "params": [
+    {
+      "name": "username",
+      "type": "string",
+      "required": true,
+      "description": "credential; supply via env:VAR",
+      "example": null,
+      "pattern": null,
+      "sensitive": true
+    },
+    {
+      "name": "password",
+      "type": "string",
+      "required": true,
+      "description": "credential; supply via env:VAR",
+      "example": null,
+      "pattern": null,
+      "sensitive": true
+    },
+    {
+      "name": "member_id",
+      "type": "string",
+      "required": true,
+      "description": "",
+      "example": "12345",
+      "pattern": null,
+      "sensitive": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "member_name",
+      "type": "string",
+      "description": "Extracted from cell 'Name' in frame main",
+      "target": {
+        "description": "cell 'Name' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "cell",
+            "name": "Name",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "text",
+            "frame": "main",
+            "role": null,
+            "name": "Ada Lovelace",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>table[2]>tbody[1]>tr[3]>td[2]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.273828125,
+              0.11055555555555556,
+              0.2882568359375,
+              0.03111111111111111
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "regex": null,
+      "after_step": 5
+    },
+    {
+      "name": "savings_balance",
+      "type": "string",
+      "description": "Extracted from cell 'S-0001' in frame main",
+      "target": {
+        "description": "cell 'S-0001' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "cell",
+            "name": "S-0001",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "text",
+            "frame": "main",
+            "role": null,
+            "name": "4,312.57",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>table[2]>tbody[1]>tr[7]>td[1]>table[1]>tbody[1]>tr[2]>td[3]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.42603759765625,
+              0.2761111111111111,
+              0.12589111328125,
+              0.03111111111111111
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "regex": null,
+      "after_step": 6
+    }
+  ],
+  "steps": [
+    {
+      "index": 0,
+      "action": "type",
+      "target": {
+        "description": "textbox 'User ID' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "textbox",
+            "name": "User ID",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "role_name",
+            "frame": "main",
+            "role": "textbox",
+            "name": "uid",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>form[1]>table[1]>tbody[1]>tr[2]>td[2]>input[1]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.28046875,
+              0.08444444444444445,
+              0.10390625,
+              0.022222222222222223
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": "{{params.username}}",
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": null,
+      "wait": {
+        "kind": "none",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [],
+      "risk": "read",
+      "note": "I need to sign in to the teller workstation first. The User ID field is visible and ready for input."
+    },
+    {
+      "index": 1,
+      "action": "type",
+      "target": {
+        "description": "textbox 'Password' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "textbox",
+            "name": "Password",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "role_name",
+            "frame": "main",
+            "role": "textbox",
+            "name": "pwd",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>form[1]>table[1]>tbody[1]>tr[3]>td[2]>input[1]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.28046875,
+              0.11666666666666667,
+              0.10390625,
+              0.022222222222222223
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": "{{params.password}}",
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": null,
+      "wait": {
+        "kind": "none",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [],
+      "risk": "read",
+      "note": "The password field is empty and must be filled to proceed with sign-in."
+    },
+    {
+      "index": 2,
+      "action": "click",
+      "target": {
+        "description": "button 'Sign In' in frame main",
+        "locators": [
+          {
+            "strategy": "role_name",
+            "frame": "main",
+            "role": "button",
+            "name": "Sign In",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>form[1]>table[1]>tbody[1]>tr[4]>td[2]>input[1]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.28046875,
+              0.14888888888888888,
+              0.04168701171875,
+              0.022222222222222223
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": null,
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": null,
+      "wait": {
+        "kind": "load",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [
+        {
+          "kind": "url_contains",
+          "value": "/members/search",
+          "target": null,
+          "frame": null
+        }
+      ],
+      "risk": "read",
+      "note": "Credentials have been entered; next step is to submit the form by clicking the Sign In button to proceed to the main teller interface."
+    },
+    {
+      "index": 3,
+      "action": "type",
+      "target": {
+        "description": "textbox 'Member ID' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "textbox",
+            "name": "Member ID",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "role_name",
+            "frame": "main",
+            "role": "textbox",
+            "name": "memberid",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>form[1]>table[1]>tbody[1]>tr[2]>td[2]>input[1]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.28046875,
+              0.08444444444444445,
+              0.06640625,
+              0.022222222222222223
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": "{{params.member_id}}",
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": null,
+      "wait": {
+        "kind": "none",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [],
+      "risk": "read",
+      "note": "The system is signed in, and I need to enter the Member ID to look up the member's details. The textbox for Member ID is identified as main_5."
+    },
+    {
+      "index": 4,
+      "action": "click",
+      "target": {
+        "description": "button 'Search' in frame main",
+        "locators": [
+          {
+            "strategy": "role_name",
+            "frame": "main",
+            "role": "button",
+            "name": "Search",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>form[1]>table[1]>tbody[1]>tr[3]>td[2]>input[1]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.28046875,
+              0.11666666666666667,
+              0.0422119140625,
+              0.022222222222222223
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": null,
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": null,
+      "wait": {
+        "kind": "load",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [
+        {
+          "kind": "url_contains",
+          "value": "/members/{{params.member_id}}",
+          "target": null,
+          "frame": null
+        }
+      ],
+      "risk": "read",
+      "note": "The Member ID has been entered; the next logical step is to click the Search button to retrieve the member's details."
+    },
+    {
+      "index": 5,
+      "action": "extract",
+      "target": {
+        "description": "cell 'Name' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "cell",
+            "name": "Name",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "text",
+            "frame": "main",
+            "role": null,
+            "name": "Ada Lovelace",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>table[2]>tbody[1]>tr[3]>td[2]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.273828125,
+              0.11055555555555556,
+              0.2882568359375,
+              0.03111111111111111
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": null,
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": "member_name",
+      "wait": {
+        "kind": "none",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [],
+      "risk": "read",
+      "note": "I have successfully navigated to the member detail page and can now extract the required information: the member's name and the current balance of their Regular"
+    },
+    {
+      "index": 6,
+      "action": "extract",
+      "target": {
+        "description": "cell 'S-0001' in frame main",
+        "locators": [
+          {
+            "strategy": "label",
+            "frame": "main",
+            "role": "cell",
+            "name": "S-0001",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "text",
+            "frame": "main",
+            "role": null,
+            "name": "4,312.57",
+            "path": null,
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "path",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": "body[1]>table[2]>tbody[1]>tr[7]>td[1]>table[1]>tbody[1]>tr[2]>td[3]",
+            "bbox_frac": null,
+            "exact": true
+          },
+          {
+            "strategy": "bbox",
+            "frame": "main",
+            "role": null,
+            "name": null,
+            "path": null,
+            "bbox_frac": [
+              0.42603759765625,
+              0.2761111111111111,
+              0.12589111328125,
+              0.03111111111111111
+            ],
+            "exact": true
+          }
+        ],
+        "recorded_rung": 0
+      },
+      "value": null,
+      "url": null,
+      "key": null,
+      "accept": true,
+      "output": "savings_balance",
+      "wait": {
+        "kind": "none",
+        "value": null,
+        "target": null,
+        "timeout_ms": 8000
+      },
+      "expect": [],
+      "risk": "read",
+      "note": "I have already extracted the member's name. Now I need to extract the Regular Share (Savings) current balance as specified in the goal."
+    }
+  ],
+  "checkpoints": [
+    {
+      "name": "goal_reached",
+      "after_step": 6,
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "Member Detail",
+          "target": null,
+          "frame": null
+        },
+        {
+          "kind": "url_contains",
+          "value": "/members/{{params.member_id}}",
+          "target": null,
+          "frame": null
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "kind": "business",
+      "description": "The searched member does not exist.",
+      "detect": {
+        "kind": "text_visible",
+        "value": "No member found for",
+        "target": null,
+        "frame": null
+      },
+      "recovery": "none",
+      "max_attempts": 1
+    },
+    {
+      "code": "VALIDATION_ERROR",
+      "kind": "business",
+      "description": "The app rejected the submitted form; the message names the field.",
+      "detect": {
+        "kind": "text_visible",
+        "value": "is required.",
+        "target": null,
+        "frame": null
+      },
+      "recovery": "none",
+      "max_attempts": 1
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "kind": "business",
+      "description": "The operator lacks permission for this record.",
+      "detect": {
+        "kind": "text_visible",
+        "value": "You do not have permission",
+        "target": null,
+        "frame": null
+      },
+      "recovery": "none",
+      "max_attempts": 1
+    },
+    {
+      "code": "UNEXPECTED_DIALOG",
+      "kind": "recoverable",
+      "description": "A blocking browser dialog (compliance notice, etc.) interrupted the flow.",
+      "detect": {
+        "kind": "dialog_open",
+        "value": null,
+        "target": null,
+        "frame": null
+      },
+      "recovery": "dismiss_dialog",
+      "max_attempts": 2
+    },
+    {
+      "code": "SESSION_EXPIRED",
+      "kind": "recoverable",
+      "description": "The session timed out; sign in again and resume.",
+      "detect": {
+        "kind": "text_visible",
+        "value": "Your session has expired",
+        "target": null,
+        "frame": null
+      },
+      "recovery": "relogin",
+      "max_attempts": 1
+    },
+    {
+      "code": "APP_ERROR",
+      "kind": "failure",
+      "description": "The host system returned an internal error.",
+      "detect": {
+        "kind": "text_visible",
+        "value": "System Error",
+        "target": null,
+        "frame": null
+      },
+      "recovery": "none",
+      "max_attempts": 1
+    }
+  ],
+  "risk_max": "read",
+  "provenance": {
+    "discovered_by": "qwen/qwen3-vl-235b-a22b-instruct",
+    "run_id": "discovery-20260921T185259Z-2c6d6b",
+    "discovered_at": "2026-09-21T18:53:19.330705Z",
+    "transcript_sha256": "acce39908b84613abff623ad8f7005051daf9353d7b831fd2fc83fc9cbc093b5",
+    "steps_taken": 8,
+    "surface": "playwright-chromium"
+  }
+}

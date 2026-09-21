@@ -97,7 +97,11 @@ def test_discovery_and_record(mock_url, tmp_path):
     assert [s.action for s in cap.steps] == ["type", "type", "click", "type", "click", "extract", "extract"]
     assert cap.steps[1].value == "{{params.password}}"
     assert cap.steps[3].target.locators[0].strategy == "label" and cap.steps[3].target.locators[0].name == "Member ID"
-    assert cap.steps[4].expect[0].kind == "url_contains" and cap.steps[4].expect[0].value == "/members/12345"
+    # post-conditions and checkpoints must be parameterized, or the capability only works for one member
+    assert cap.steps[4].expect[0].kind == "url_contains"
+    assert cap.steps[4].expect[0].value == "/members/{{params.member_id}}"
+    assert cap.checkpoints[0].expect[-1].value == "/members/{{params.member_id}}"
+    assert "12345" not in cap.model_dump_json(exclude={"params"})
     assert {o.name for o in cap.outputs} == {"member_name", "savings_balance"}
     assert {p.name for p in cap.params} == {"username", "password", "member_id"}
     assert next(p for p in cap.params if p.name == "password").example is None

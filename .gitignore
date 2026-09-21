@@ -7,4 +7,4 @@ runs/
 *.egg-info/
 .DS_Store
 tests/fixtures/
-artifacts/*.json
+# the demo artifact is committed on purpose; regenerate it with `cua discover`

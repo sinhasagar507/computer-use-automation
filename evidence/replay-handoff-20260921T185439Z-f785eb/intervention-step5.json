@@ -1,0 +1,8 @@
+{
+  "run_id": "replay-handoff-20260921T185439Z-f785eb",
+  "goal": "Sign in to the teller workstation, look up the member whose Member ID is the member_id parameter, and read that member's details. Extract the member's name as output member_name and the Regular Share (Savings) current balance as output savings_balance.",
+  "step_index": 5,
+  "reason": "undeclared blocking dialog: 'Compliance notice: this member record was updated by another teller. Continue?'",
+  "url": "http://127.0.0.1:5050/",
+  "screenshot": "001-escalate-step5.png"
+}
