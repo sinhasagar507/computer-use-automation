@@ -1,0 +1,13 @@
+{% set title = "Navigation" %}
+{% extends "_base.html" %}
+{% block content %}
+<table class="box" width="160">
+<tr><th>Menu</th></tr>
+{% if logged_in %}
+<tr><td><a href="{{ t.search_route }}" target="main">Member Inquiry</a></td></tr>
+<tr><td><a href="/logout" target="main">Sign Out</a></td></tr>
+{% else %}
+<tr><td><a href="/login" target="main">Sign In</a></td></tr>
+{% endif %}
+</table>
+{% endblock %}

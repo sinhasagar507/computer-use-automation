@@ -1,0 +1,30 @@
+{% set title = "Member Detail" %}
+{% extends "_base.html" %}
+{% block content %}
+<table class="box">
+<tr><th colspan="2">Member Detail</th></tr>
+<tr><td class="lbl">{{ t.member_id_label }}</td><td>{{ mid }}</td></tr>
+<tr><td class="lbl">Name</td><td>{{ m.name }}</td></tr>
+<tr><td class="lbl">Member Since</td><td>{{ m.since }}</td></tr>
+<tr><td class="lbl">SSN</td><td>***-**-{{ m.ssn_last4 }}</td></tr>
+<tr><td class="lbl">Phone</td><td>{{ m.phone }}</td></tr>
+<tr><td colspan="2">
+  <table class="box" style="margin:4px">
+  <tr><th>Account Type</th><th>Account No.</th><th>Current Balance</th></tr>
+  {% for a in m.accounts %}
+  <tr><td>{{ a.type }}</td><td>{{ a.number }}</td><td align="right">{{ a.balance }}</td></tr>
+  {% endfor %}
+  </table>
+</td></tr>
+<tr><td colspan="2">
+  <a href="/members/{{ mid }}/subaccount/new">{{ t.open_sub_label }}</a>
+  &nbsp;|&nbsp; <a href="{{ t.search_route }}">New inquiry</a>
+</td></tr>
+</table>
+{% if show_dialog %}
+<script>
+  // Simulates an unexpected interstitial that a legacy app throws at the operator.
+  window.confirm("Compliance notice: this member record was updated by another teller. Continue?");
+</script>
+{% endif %}
+{% endblock %}

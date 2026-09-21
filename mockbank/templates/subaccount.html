@@ -1,0 +1,18 @@
+{% set title = "Open Sub-Account" %}
+{% extends "_base.html" %}
+{% block content %}
+<form method="post" action="/members/{{ mid }}/subaccount/new">
+<table class="box">
+<tr><th colspan="2">{{ t.open_sub_label }} for {{ m.name }} ({{ mid }})</th></tr>
+{% for e in errors %}<tr><td colspan="2" class="err">{{ e }}</td></tr>{% endfor %}
+<tr><td class="lbl">Product</td><td>
+  <select name="product">
+    <option value="">-- select --</option>
+    {% for p in products %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+  </select></td></tr>
+<tr><td class="lbl">Nickname</td><td><input type="text" name="nickname" size="24"></td></tr>
+<tr><td class="lbl">Initial Deposit</td><td><input type="text" name="deposit" size="10" value="0.00"></td></tr>
+<tr><td></td><td><input type="submit" value="{{ t.confirm_button }}"> &nbsp; <a href="/members/{{ mid }}">Cancel</a></td></tr>
+</table>
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% set title = "Confirmation" %}
+{% extends "_base.html" %}
+{% block content %}
+<table class="box">
+<tr><th colspan="2">Sub-Account Opened</th></tr>
+<tr><td colspan="2" class="msg">The new sub-account was opened successfully.</td></tr>
+<tr><td class="lbl">Confirmation No.</td><td>{{ conf }}</td></tr>
+<tr><td class="lbl">Member</td><td>{{ m.name }} ({{ mid }})</td></tr>
+<tr><td class="lbl">Product</td><td>{{ product }}</td></tr>
+<tr><td class="lbl">Nickname</td><td>{{ nick }}</td></tr>
+<tr><td class="lbl">New Account No.</td><td>{{ new_no }}</td></tr>
+<tr><td class="lbl">Initial Deposit</td><td>{{ deposit }}</td></tr>
+<tr><td colspan="2"><a href="/members/{{ mid }}">Back to member</a></td></tr>
+</table>
+{% endblock %}

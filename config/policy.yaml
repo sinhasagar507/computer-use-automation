@@ -1,0 +1,51 @@
+# Safety policy. The agent and the replay engine both enforce this.
+allowlist:
+  hosts:
+    - "localhost"
+    - "127.0.0.1"
+  # Route prefixes the automation may navigate to or act on. Anything else is blocked.
+  routes:
+    - "/"
+    - "/nav"
+    - "/main"
+    - "/login"
+    - "/logout"
+    - "/members"
+    - "/member"
+    - "/fault"
+  # Action types the agent may emit.
+  actions:
+    - navigate
+    - click
+    - type
+    - select
+    - press
+    - extract
+    - dismiss_dialog
+    - done
+
+# Risk classes. `irreversible` actions are blocked unless the run passes --confirm-risky,
+# in which case they escalate to a human for confirmation instead of executing.
+risk:
+  irreversible_patterns:
+    - "post transaction"
+    - "close account"
+    - "delete"
+    - "wire"
+    - "transfer funds"
+  reversible_write_patterns:
+    - "open sub-account"
+    - "open account"
+    - "add share account"
+    - "create account"
+    - "save"
+    - "submit"
+    - "create"
+
+# Redaction. Values matching these param names are masked in logs and artifacts.
+redact:
+  param_names: [password, ssn, token, secret, api_key]
+  patterns:
+    - '\b\d{3}-\d{2}-\d{4}\b'   # SSN
+    - 'sk-or-v1-[A-Za-z0-9]+'   # OpenRouter key
+    - 'Bearer [A-Za-z0-9._-]+'

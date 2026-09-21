@@ -1,0 +1,13 @@
+{% set title = "Member Inquiry" %}
+{% extends "_base.html" %}
+{% block content %}
+<form method="post" action="{{ t.search_route }}">
+<table class="box">
+<tr><th colspan="2">Member Inquiry</th></tr>
+{% if error %}<tr><td colspan="2" class="err">{{ error }}</td></tr>{% endif %}
+{% if not_found %}<tr><td colspan="2" class="msg">No member found for {{ t.member_id_label }} {{ not_found }}.</td></tr>{% endif %}
+<tr><td class="lbl">{{ t.member_id_label }}</td><td><input type="text" name="memberid" size="12"></td></tr>
+<tr><td></td><td><input type="submit" value="{{ t.search_button }}"></td></tr>
+</table>
+</form>
+{% endblock %}

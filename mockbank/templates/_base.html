@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>{{ t.brand }}{% if title %} - {{ title }}{% endif %}</title>
+<style>
+body { font-family: Verdana, Arial, sans-serif; font-size: 12px; background: #e8e8e8; margin: 0; }
+table.hdr { width: 100%; background: #1f3b73; color: #fff; }
+table.hdr td { padding: 6px 10px; font-weight: bold; }
+table.box { background: #fff; border: 1px solid #999; margin: 12px; border-collapse: collapse; }
+table.box td, table.box th { border: 1px solid #ccc; padding: 4px 8px; text-align: left; }
+table.box th { background: #d9dfeb; }
+.lbl { color: #333; width: 140px; }
+.err { color: #b00020; font-weight: bold; }
+.msg { color: #1f3b73; font-weight: bold; }
+.dev { color: #777; font-size: 10px; margin: 12px; }
+input, select { font-size: 12px; }
+</style>
+</head>
+<body>
+<table class="hdr" cellspacing="0"><tr><td>{{ t.brand }} &mdash; Teller Workstation</td><td align="right">{% if session.user %}Signed in: {{ session.user }}{% endif %}</td></tr></table>
+{% block content %}{% endblock %}
+<div class="dev">tenant={{ tenant }} fault={{ fault }}</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% set title = "Session Expired" %}
+{% extends "_base.html" %}
+{% block content %}
+<table class="box">
+<tr><th>Session Expired</th></tr>
+<tr><td class="err">Your session has expired due to inactivity. Please sign in again.</td></tr>
+<tr><td><a href="/login">Sign In</a></td></tr>
+</table>
+{% endblock %}

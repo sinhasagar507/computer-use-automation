@@ -1,0 +1,13 @@
+{% set title = "Sign In" %}
+{% extends "_base.html" %}
+{% block content %}
+<form method="post" action="/login">
+<table class="box">
+<tr><th colspan="2">Teller Sign In</th></tr>
+{% if error %}<tr><td colspan="2" class="err">{{ error }}</td></tr>{% endif %}
+<tr><td class="lbl">User ID</td><td><input type="text" name="uid" size="20"></td></tr>
+<tr><td class="lbl">Password</td><td><input type="password" name="pwd" size="20"></td></tr>
+<tr><td></td><td><input type="submit" value="Sign In"></td></tr>
+</table>
+</form>
+{% endblock %}
